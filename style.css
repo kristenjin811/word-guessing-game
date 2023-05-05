@@ -1,0 +1,29 @@
+.game-panel {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  margin-top: 10%;
+}
+
+.new-game-btn {
+  margin-top: 10px;
+  background-color: #007BFF;
+  width: 180px;
+  border: none;
+  color: white;
+  height: 26px;
+}
+
+.btn :hover {
+  cursor: pointer;
+  background-color: #0056B3;
+
+}
+
+.user-input {
+  width: 200px;
+  height: 20px;
+}
+
+.random-word {
+  font-size: 20px;
+}

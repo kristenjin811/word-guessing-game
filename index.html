@@ -5,20 +5,18 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Word Guessing Game</title>
-  <script src="main.js" defer></script>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <div class="game-panel">
+  <div class="game-container">
     <h1>Word Guessing Game</h1>
-    <span></span><p class="chance-counter"> / 10</p>
-    <p class="random-word"></p>
-    <div class="input-box">
-      <input class="user-input" />
-    </div>
+    <span class="counter">0</span><span> / 10</span>
+    <p class="random-word">random word</p>
+    <input class="user-input" type="text" pattern="[a-zA-Z]" maxlength="1"/>
     <div class="btn">
       <button class="new-game-btn">New Game</button>
     </div>
   </div>
+  <script src="main.js" defer></script>
 </body>
 </html>

@@ -1,7 +1,14 @@
-.game-panel {
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.game-container{
   text-align: center;
-  margin-top: 10%;
 }
 
 .new-game-btn {
@@ -20,10 +27,12 @@
 }
 
 .user-input {
-  width: 200px;
-  height: 20px;
+  width: 210px;
+  height: 25px;
+  font-size: 17px;
+  text-align: center;
 }
 
 .random-word {
-  font-size: 20px;
+  font-size: 25px;
 }

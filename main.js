@@ -151,7 +151,7 @@ const Model = ((api, view) => {
       this._correctWords = 0
     }
 
-    correctWords() {
+    getCorrectWordsTotal() {
       return this._correctWords;
     }
 
@@ -228,13 +228,12 @@ const Controller = ((api, model, view) => {
           state.updateIncorrectGuesses();
           if (state.isGameOver()) {
             setTimeout(() => {
-              alert(`Game over! You have guessed ${state.correctWords()} word${state.correctWords() !== 1 ? 's' : ''}!`)
+              alert(`Game over! You have guessed ${state.getCorrectWordsTotal()} word${state.getCorrectWordsTotal() !== 1 ? 's' : ''}!`)
               newGame()
             }, 500)
           }
         }
         render()
-
       }
     })
   }

@@ -1,17 +1,19 @@
 body {
   display: flex;
+  /* sets the body to be a flex container */
   justify-content: center;
   align-items: center;
+  /* the above two properties center the flex items both horizontally and vertically */
   min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #f5f5f5;
 }
 
-.game-container{
+.game-container {
   text-align: center;
 }
 
-.new-game-btn {
+.game-container__new-game-btn {
   margin-top: 10px;
   background-color: #007BFF;
   width: 180px;
@@ -20,19 +22,19 @@ body {
   height: 26px;
 }
 
-.btn :hover {
+.game-container__btn :hover {
   cursor: pointer;
   background-color: #0056B3;
 
 }
 
-.user-input {
+.game-container__user-input {
   width: 210px;
   height: 25px;
   font-size: 17px;
   text-align: center;
 }
 
-.random-word {
+.game-container__random-word {
   font-size: 25px;
 }

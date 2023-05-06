@@ -9,12 +9,15 @@
 </head>
 <body>
   <div class="game-container">
-    <h1>Word Guessing Game</h1>
-    <span class="counter">0</span><span> / 10</span>
-    <p class="random-word">random word</p>
-    <input class="user-input" type="text" pattern="[a-zA-Z]" maxlength="1"/>
-    <div class="btn">
-      <button class="new-game-btn">New Game</button>
+    <h1 class="game-container__heading">Word Guessing Game</h1>
+    <div class="game-container__status">
+      <span class="game-container__counter">0</span>
+      <span class="game-container__counter-label"> / 10</span>
+    </div>
+    <p class="game-container__random-word">random word</p>
+    <input class="game-container__user-input" type="text" pattern="[a-zA-Z]" maxlength="1"/>
+    <div class="game-container__btn">
+      <button class="game-container__new-game-btn">New Game</button>
     </div>
   </div>
   <script src="main.js" defer></script>

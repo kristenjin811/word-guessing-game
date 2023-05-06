@@ -14,7 +14,10 @@ const View = (() => {
     wordArea: ".game-container__random-word",
     inputBox: ".game-container__user-input",
     btn: ".game-container__new-game-btn",
-    counter: ".game-container__counter"
+    counter: ".game-container__counter",
+    letterHistory: ".game-container__guessed-letters",
+    timer: ".game-container__timer",
+    container: "game-container"
   }
 
   return {
@@ -53,6 +56,7 @@ const Model = ((api, view) => {
       this._incorrectGuesses = 0
       this._maxIncorrectGuesses = 10
       this._correctWords = 0
+      this._guessedLetters = new Set()
     }
     get word() {
       return this._word
@@ -70,16 +74,17 @@ const Model = ((api, view) => {
       return this._maxIncorrectGuesses
     }
 
-    get correctWords() {
-      return this._correctWords
+    get guessedLetters() {
+      return this._guessedLetters;
     }
 
     set word(value) {
       this._word = value
       this._maskedWord = this.maskWord()
+      this._guessedLetters = []
     }
 
-   maskWord(){
+    maskWord(){
       // takes a word as input and returns the word with random indexed letters
         // replaced with underscore _
       let concealCount, concealIndices
@@ -101,6 +106,12 @@ const Model = ((api, view) => {
     }
 
     isCorrectGuess(input) {
+      // check if the input is already in guessedLetters
+      if (this._guessedLetters.includes(input)) {
+        alert(`You already guessed the letter ${input}.`)
+        return true
+      }
+      this._guessedLetters.push(input)
       // Convert the masked word to an array of characters
       const maskedWordChars = this._maskedWord.split('');
 
@@ -120,9 +131,6 @@ const Model = ((api, view) => {
         this._maskedWord = maskedWordChars.join('');
         return true;
       }
-
-      // If a letter is not in masked letters, but in the word, this is still an incorrect guess
-
 
       // Otherwise, return false
       return false;
@@ -145,19 +153,21 @@ const Model = ((api, view) => {
     }
 
     reset() {
-      this._word = "";
-      this._maskedWord = "";
-      this._incorrectGuesses = 0;
+      this._word = ""
+      this._maskedWord = ""
+      this._incorrectGuesses = 0
       this._correctWords = 0
+      this._guessedLetters = []
     }
 
     getCorrectWordsTotal() {
-      return this._correctWords;
+      return this._correctWords
     }
 
     incrementCorrectWords() {
-      this._correctWords++;
+      this._correctWords++
     }
+
   }
   const state = new State()
 
@@ -176,13 +186,13 @@ const Controller = ((api, model, view) => {
   const getNewWord = () => {
     getRandomWord()
       .then(wordArr => {
-        state.word = wordArr[0];
+        state.word = wordArr[0]
         console.log(state.word)
         render()
       })
       .catch(() => {
         // Use backup list in case of API failure.
-        const randomIndex = Math.floor(Math.random() * backupWordList.length);
+        const randomIndex = Math.floor(Math.random() * backupWordList.length)
         state.word = backupWordList[randomIndex];
         render()
       });
@@ -203,11 +213,32 @@ const Controller = ((api, model, view) => {
 
   const render = () => {
     // Render the game view.
-    const wordContainer = document.querySelector(domSelector.wordArea);
-    const counterSpan = document.querySelector(domSelector.counter);
-    wordContainer.innerText = state.maskedWord;
+    const wordContainer = document.querySelector(domSelector.wordArea)
+    const counterSpan = document.querySelector(domSelector.counter)
+    const guessHistory = document.querySelector(domSelector.letterHistory)
+
+    wordContainer.innerText = state.maskedWord
     console.log(state.maskedWord)
-    counterSpan.innerText = state.incorrectGuesses;
+    counterSpan.innerText = state.incorrectGuesses
+    // clear the guess history
+    guessHistory.innerHTML = ""
+
+    // Render the guessed letters
+
+    for (let i = 0; i < state.guessedLetters.length; i++) {
+      const guessItem = document.createElement("li")
+      guessItem.classList.add("guess-history__item")
+      guessItem.innerText = state.guessedLetters[i]
+
+      // Differentiate between correct and incorrect letters
+      if (state.word.includes(state.guessedLetters[i])) {
+        guessItem.classList.add("guess-history__item--correct")
+      } else {
+        guessItem.classList.add("guess-history__item--incorrect")
+      }
+
+      guessHistory.appendChild(guessItem)
+    }
   }
 
   const guessLetter = () => {
@@ -216,16 +247,20 @@ const Controller = ((api, model, view) => {
       if (event.key === 'Enter') {
         const letter = event.target.value.toLowerCase()
         event.target.value = ""
+        if (letter === " ") return;
         if (state.isCorrectGuess(letter)) {
           state.revealLetter(letter)
           if (state.hasWon()) {
             setTimeout(() => {
               state._correctWords += 1
+              state._guessedLetters = []
               continueGame()
             }, 500)
           }
         } else {
-          state.updateIncorrectGuesses();
+            state.updateIncorrectGuesses()
+
+
           if (state.isGameOver()) {
             setTimeout(() => {
               alert(`Game over! You have guessed ${state.getCorrectWordsTotal()} word${state.getCorrectWordsTotal() !== 1 ? 's' : ''}!`)
@@ -239,17 +274,16 @@ const Controller = ((api, model, view) => {
   }
 
   const initNewGameBtn = () => {
-    const newGameBtn = document.querySelector(domSelector.btn);
-    newGameBtn.addEventListener('click', newGame);
+    const newGameBtn = document.querySelector(domSelector.btn)
+    newGameBtn.addEventListener('click', newGame)
   }
-
 
   // Initialize the game.
   const bootstrap = () => {
-    newGame();
-    guessLetter();
-    initNewGameBtn();
-    render();
+    newGame()
+    guessLetter()
+    initNewGameBtn()
+    render()
   }
 
   return {

@@ -38,3 +38,20 @@ body {
 .game-container__random-word {
   font-size: 25px;
 }
+
+.game-container__guessed-letters-area {
+  margin-top: 25px;
+}
+
+.game-container__guessed-letters {
+  list-style: none;
+  margin-left: -35px;
+}
+
+.guess-history__item--correct {
+  color: green;
+}
+
+.guess-history__item--incorrect {
+  color: red;
+}

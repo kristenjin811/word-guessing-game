@@ -15,9 +15,12 @@
       <span class="game-container__counter-label"> / 10</span>
     </div>
     <p class="game-container__random-word">random word</p>
-    <input class="game-container__user-input" type="text" pattern="[a-zA-Z]" maxlength="1"/>
+    <input class="game-container__user-input" type="text" pattern="[A-Za-z]" required="required" maxlength="1"/>
     <div class="game-container__btn">
       <button class="game-container__new-game-btn">New Game</button>
+    </div>
+    <div class="game-container__guessed-letters-area">Guessed letters:
+      <ul class="game-container__guessed-letters"></ul>
     </div>
   </div>
   <script src="main.js" defer></script>

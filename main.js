@@ -16,8 +16,6 @@ const View = (() => {
     btn: ".game-container__new-game-btn",
     counter: ".game-container__counter",
     letterHistory: ".game-container__guessed-letters",
-    timer: ".game-container__timer",
-    container: "game-container"
   }
 
   return {
@@ -55,7 +53,7 @@ const Model = ((api, view) => {
       this._maskedWord = ""
       this._incorrectGuesses = 0
       this._maxIncorrectGuesses = 10
-      this._correctWords = 0
+      this._correctWordsTotal = 0
       this._guessedLetters = new Set()
     }
     get word() {
@@ -75,7 +73,11 @@ const Model = ((api, view) => {
     }
 
     get guessedLetters() {
-      return this._guessedLetters;
+      return this._guessedLetters
+    }
+
+    get getCorrectWordsTotal() {
+      return this._correctWordsTotal
     }
 
     set word(value) {
@@ -85,18 +87,17 @@ const Model = ((api, view) => {
     }
 
     maskWord(){
-      // takes a word as input and returns the word with random indexed letters
-        // replaced with underscore _
+      // replace char at random index with underscore _
       let concealCount, concealIndices
       do {
-        concealCount = Math.floor(Math.random() * this._word.length) + 1;
+        concealCount = Math.floor(Math.random() * this.word.length) + 1;
         concealIndices = new Set();
         while (concealIndices.size < concealCount) {
-          concealIndices.add(Math.floor(Math.random() * this._word.length));
+          concealIndices.add(Math.floor(Math.random() * this.word.length));
         }
-      } while (concealIndices.size === this._word.length)
+      } while (concealIndices.size === this.word.length)
 
-      return this._word.split('').map((char, index) => {
+      return this.word.split('').map((char, index) => {
         return concealIndices.has(index) ? '_' : char;
       }).join('');
     }
@@ -107,18 +108,18 @@ const Model = ((api, view) => {
 
     isCorrectGuess(input) {
       // check if the input is already in guessedLetters
-      if (this._guessedLetters.includes(input)) {
+      if (this.guessedLetters.includes(input)) {
         alert(`You already guessed the letter ${input}.`)
         return true
       }
-      this._guessedLetters.push(input)
+      this.guessedLetters.push(input)
       // Convert the masked word to an array of characters
-      const maskedWordChars = this._maskedWord.split('');
+      const maskedWordChars = this.maskedWord.split('');
 
       // Iterate over the array and reveal any matching characters
       let matchFound = false;
-      for (let i = 0; i < this._word.length; i++) {
-        if (this._word[i] === input) {
+      for (let i = 0; i < this.word.length; i++) {
+        if (this.word[i] === input) {
           if (maskedWordChars[i] === '_') {
             maskedWordChars[i] = input;
             matchFound = true;
@@ -136,36 +137,29 @@ const Model = ((api, view) => {
       return false;
     }
 
-    revealLetter(letter) {
-      this._maskedWord = this._maskedWord.split('').map((char, index) => {
-        return (char === '_' && this._word[index] === letter) ? letter : char;
-      }).join('');
-      // change the masked letter back to letter
-    }
-
     isGameOver() {
       return this.incorrectGuesses >= this.maxIncorrectGuesses
     }
 
     hasWon() {
       // return true if there is no more masked letter in this word
-      return !this._maskedWord.includes('_')
+      return !this.maskedWord.includes('_')
     }
 
     reset() {
       this._word = ""
       this._maskedWord = ""
       this._incorrectGuesses = 0
-      this._correctWords = 0
+      this._correctWordsTotal = 0
       this._guessedLetters = []
     }
 
-    getCorrectWordsTotal() {
-      return this._correctWords
+    resetGuessedLetters() {
+      this._guessedLetters = []
     }
 
-    incrementCorrectWords() {
-      this._correctWords++
+    incrementCorrectWordsTotal() {
+      this._correctWordsTotal++
     }
 
   }
@@ -224,19 +218,24 @@ const Controller = ((api, model, view) => {
     guessHistory.innerHTML = ""
 
     // Render the guessed letters
-
     for (let i = 0; i < state.guessedLetters.length; i++) {
+      // creates an "li" element for each guess and store into guessItem variable
       const guessItem = document.createElement("li")
+      // add a class to the guessItem
       guessItem.classList.add("guess-history__item")
+      // set innertext with the current guessed letter
       guessItem.innerText = state.guessedLetters[i]
 
       // Differentiate between correct and incorrect letters
       if (state.word.includes(state.guessedLetters[i])) {
+        // add a class to the correct guessItem
         guessItem.classList.add("guess-history__item--correct")
       } else {
+        // add a class to the incorrect guessItem
         guessItem.classList.add("guess-history__item--incorrect")
       }
-
+      // append the "li" guessItem to the guessHistory element
+      // appendChild() is a method used to append an HTML element to another element.
       guessHistory.appendChild(guessItem)
     }
   }
@@ -249,11 +248,13 @@ const Controller = ((api, model, view) => {
         event.target.value = ""
         if (letter === " ") return;
         if (state.isCorrectGuess(letter)) {
-          state.revealLetter(letter)
+          // state.revealLetter(letter)
           if (state.hasWon()) {
             setTimeout(() => {
-              state._correctWords += 1
-              state._guessedLetters = []
+              state.incrementCorrectWordsTotal()
+              console.log("current score", state.getCorrectWordsTotal)
+              state.resetGuessedLetters()
+              console.log("guessed history: ", state.guessedLetters)
               continueGame()
             }, 500)
           }
@@ -263,7 +264,7 @@ const Controller = ((api, model, view) => {
 
           if (state.isGameOver()) {
             setTimeout(() => {
-              alert(`Game over! You have guessed ${state.getCorrectWordsTotal()} word${state.getCorrectWordsTotal() !== 1 ? 's' : ''}!`)
+              alert(`Game over! You have guessed ${state.getCorrectWordsTotal} word${state.getCorrectWordsTotal !== 1 ? 's' : ''}!`)
               newGame()
             }, 500)
           }

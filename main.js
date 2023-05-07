@@ -18,8 +18,43 @@ const View = (() => {
     letterHistory: ".game-container__guessed-letters",
   }
 
+  const render = (state) => {
+    // Render the game view.
+    const wordContainer = document.querySelector(domSelector.wordArea)
+    const counterSpan = document.querySelector(domSelector.counter)
+    const guessHistory = document.querySelector(domSelector.letterHistory)
+
+    wordContainer.innerText = state.maskedWord
+    counterSpan.innerText = state.incorrectGuesses
+    // clear the guess history
+    guessHistory.innerHTML = ""
+
+    // Render the guessed letters
+    for (let i = 0; i < state.guessedLetters.length; i++) {
+      // creates an "li" element for each guess and store into guessItem variable
+      const guessItem = document.createElement("li")
+      // add a class to the guessItem
+      guessItem.classList.add("guess-history__item")
+      // set innertext with the current guessed letter
+      guessItem.innerText = state.guessedLetters[i]
+
+      // Differentiate between correct and incorrect letters
+      if (state.word.includes(state.guessedLetters[i])) {
+        // add a class to the correct guessItem
+        guessItem.classList.add("guess-history__item--correct")
+      } else {
+        // add a class to the incorrect guessItem
+        guessItem.classList.add("guess-history__item--incorrect")
+      }
+      // append the "li" guessItem to the guessHistory element
+      // appendChild() is a method used to append an HTML element to another element.
+      guessHistory.appendChild(guessItem)
+    }
+  }
+
   return {
     domSelector,
+    render
   }
 })()
 
@@ -173,7 +208,7 @@ const Model = ((api, view) => {
 
 
 const Controller = ((api, model, view) => {
-  const { domSelector } = view
+  const { domSelector, render } = view
   const { state, backupWordList } = model
   const { getRandomWord } = api
 
@@ -182,13 +217,13 @@ const Controller = ((api, model, view) => {
       .then(wordArr => {
         state.word = wordArr[0]
         console.log(state.word)
-        render()
+        view.render(state)
       })
       .catch(() => {
         // Use backup list in case of API failure.
         const randomIndex = Math.floor(Math.random() * backupWordList.length)
         state.word = backupWordList[randomIndex];
-        render()
+        view.render(state)
       });
   }
 
@@ -202,42 +237,6 @@ const Controller = ((api, model, view) => {
     state.word = ""
     state.maskedWord = ""
     getNewWord()
-  }
-
-
-  const render = () => {
-    // Render the game view.
-    const wordContainer = document.querySelector(domSelector.wordArea)
-    const counterSpan = document.querySelector(domSelector.counter)
-    const guessHistory = document.querySelector(domSelector.letterHistory)
-
-    wordContainer.innerText = state.maskedWord
-    console.log(state.maskedWord)
-    counterSpan.innerText = state.incorrectGuesses
-    // clear the guess history
-    guessHistory.innerHTML = ""
-
-    // Render the guessed letters
-    for (let i = 0; i < state.guessedLetters.length; i++) {
-      // creates an "li" element for each guess and store into guessItem variable
-      const guessItem = document.createElement("li")
-      // add a class to the guessItem
-      guessItem.classList.add("guess-history__item")
-      // set innertext with the current guessed letter
-      guessItem.innerText = state.guessedLetters[i]
-
-      // Differentiate between correct and incorrect letters
-      if (state.word.includes(state.guessedLetters[i])) {
-        // add a class to the correct guessItem
-        guessItem.classList.add("guess-history__item--correct")
-      } else {
-        // add a class to the incorrect guessItem
-        guessItem.classList.add("guess-history__item--incorrect")
-      }
-      // append the "li" guessItem to the guessHistory element
-      // appendChild() is a method used to append an HTML element to another element.
-      guessHistory.appendChild(guessItem)
-    }
   }
 
   const guessLetter = () => {
@@ -269,7 +268,7 @@ const Controller = ((api, model, view) => {
             }, 500)
           }
         }
-        render()
+        view.render(state)
       }
     })
   }
@@ -284,7 +283,7 @@ const Controller = ((api, model, view) => {
     newGame()
     guessLetter()
     initNewGameBtn()
-    render()
+    view.render(state)
   }
 
   return {

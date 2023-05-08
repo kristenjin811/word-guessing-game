@@ -208,13 +208,14 @@ const Model = ((api, view) => {
 
 
 const Controller = ((api, model, view) => {
-  const { domSelector, render } = view
+  const { domSelector } = view
   const { state, backupWordList } = model
   const { getRandomWord } = api
 
   const getNewWord = () => {
     getRandomWord()
       .then(wordArr => {
+        console.log(wordArr)
         state.word = wordArr[0]
         console.log(state.word)
         view.render(state)
@@ -245,7 +246,7 @@ const Controller = ((api, model, view) => {
       if (event.key === 'Enter') {
         const letter = event.target.value.toLowerCase()
         event.target.value = ""
-        if (letter === " ") return;
+        if (letter === " ") return
         if (state.isCorrectGuess(letter)) {
           // state.revealLetter(letter)
           if (state.hasWon()) {

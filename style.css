@@ -22,10 +22,9 @@ body {
   height: 26px;
 }
 
-.game-container__btn :hover {
+.game-container__new-game-btn:hover {
   cursor: pointer;
   background-color: #0056B3;
-
 }
 
 .game-container__user-input {
@@ -46,6 +45,13 @@ body {
 .game-container__guessed-letters {
   list-style: none;
   margin-left: -35px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.guess-history__item {
+  margin-right: 5px;
 }
 
 .guess-history__item--correct {

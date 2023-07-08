@@ -2,7 +2,7 @@
 This is a Word guessing game.
 
 ## Programming languages and tools
-Javascript, HTML, CSS, MVS pattern, BEM Naming conventions
+Javascript, HTML, CSS, MVC pattern, BEM Naming conventions
 
 ## Functionalities
 Get the random word from the following API: https://random-word-api.herokuapp.com/word
